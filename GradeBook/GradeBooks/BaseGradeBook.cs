@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using GradeBook.UserInterfaces;
 
 namespace GradeBook.GradeBooks
 {
@@ -14,29 +13,14 @@ namespace GradeBook.GradeBooks
     {
         public string Name { get; set; }
         public List<Student> Students { get; set; }
-
         public GradeBookType Type { get; set; }
-
-        
         public bool IsWeighted { get; set; }
-        public Dictionary<string, bool> WeightedLetterGrades { get; set; }
 
-        public BaseGradeBook(string name, bool isWeighted) 
-        {
-            Name = name;
-            IsWeighted = isWeighted;
-            WeightedLetterGrades = new Dictionary<string, bool>();
-        }
-
-        
-
-
-
-
-        public BaseGradeBook(string name)
+        public BaseGradeBook(string name, bool isWeighted)
         {
             Name = name;
             Students = new List<Student>();
+            IsWeighted = isWeighted;
         }
 
         public void AddStudent(Student student)
@@ -58,8 +42,6 @@ namespace GradeBook.GradeBooks
             }
             Students.Remove(student);
         }
-
-        
 
         public void AddGrade(string name, double score)
         {
@@ -95,7 +77,6 @@ namespace GradeBook.GradeBooks
             }
         }
 
-
         public static BaseGradeBook Load(string name)
         {
             if (!File.Exists(name + ".gdbk"))
@@ -113,7 +94,6 @@ namespace GradeBook.GradeBooks
                 }
             }
         }
-        
 
         public void Save()
         {
@@ -129,20 +109,30 @@ namespace GradeBook.GradeBooks
 
         public virtual double GetGPA(char letterGrade, StudentType studentType)
         {
+            var gpa = 0;
+
             switch (letterGrade)
             {
                 case 'A':
-                    return 4;
+                    gpa = 4;
+                    break;
                 case 'B':
-                    return 3;
+                    gpa = 3;
+                    break;
                 case 'C':
-                    return 2;
+                    gpa = 2;
+                    break;
                 case 'D':
-                    return 1;
+                    gpa = 1;
+                    break;
                 case 'F':
-                    return 0;
+                    gpa = 0;
+                    break;
             }
-            return 0;
+            if (IsWeighted && (studentType == StudentType.Honors || studentType == StudentType.DualEnrolled))
+                gpa++;
+            return gpa;
+
         }
 
         public virtual void CalculateStatistics()
@@ -286,10 +276,8 @@ namespace GradeBook.GradeBooks
                              from type in assembly.GetTypes()
                              where type.FullName == "GradeBook.GradeBooks.StandardGradeBook"
                              select type).FirstOrDefault();
-            
+
             return JsonConvert.DeserializeObject(json, gradebook);
         }
-
-        
     }
 }

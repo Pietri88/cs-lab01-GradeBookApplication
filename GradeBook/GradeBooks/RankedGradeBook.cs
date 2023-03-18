@@ -1,93 +1,57 @@
-﻿using GradeBook.Enums;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GradeBook.Enums;
 
 namespace GradeBook.GradeBooks
 {
     public class RankedGradeBook : BaseGradeBook
     {
-
         public RankedGradeBook(string name, bool isWeighted) : base(name, isWeighted)
         {
-            Type = GradeBookType.Ranked;
+            Type = Enums.GradeBookType.Ranked;
         }
-
         public override char GetLetterGrade(double averageGrade)
+        {
+            if (Students.Count < 5) throw new InvalidOperationException();
+
+            var threshold = (int)Math.Ceiling(Students.Count * 0.2);
+            var grades = Students.OrderByDescending(e => e.AverageGrade).Select(e => e.AverageGrade).ToList();
+
+            if (grades[threshold - 1] <= averageGrade)
+                return 'A';
+            else if (grades[(threshold * 2) - 1] <= averageGrade)
+                return 'B';
+            else if (grades[(threshold * 3) - 1] <= averageGrade)
+                return 'C';
+            else if (grades[(threshold * 4) - 1] <= averageGrade)
+                return 'D';
+            else return 'F';
+        }
+        public override void CalculateStatistics()
         {
             if (Students.Count < 5)
             {
-                throw new InvalidOperationException("Ranked grading requires at least 5 students.");
-            }
-
-            int studentCount = Students.Count;
-            int thresholdIndex = (int)Math.Floor(studentCount * 0.2);
-
-            var orderedGrades = Students.OrderByDescending(s => s.AverageGrade).Select(s => s.AverageGrade).ToList();
-            int studentIndex = orderedGrades.IndexOf(averageGrade);
-
-            if (studentIndex < 0)
-            {
-                throw new InvalidOperationException("The specified average grade is not found in the grade book.");
-            }
-
-            if (studentIndex < thresholdIndex)
-            {
-                return 'A';
-            }
-
-            if (studentIndex < thresholdIndex * 2)
-            {
-                return 'B';
-            }
-
-            if (studentIndex < thresholdIndex * 3)
-            {
-                return 'C';
-            }
-
-            if (studentIndex < thresholdIndex * 4)
-            {
-                return 'D';
-            }
-
-            return 'F';
-        }
-
-
-        public override void CalculateStatistics()
-        {
-            if(Students.Count < 5)
-            {
-
-                Console.WriteLine("Ranked grading requires at least 5 students.");
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
                 return;
             }
-    
-            base.CalculateStatistics();
+            else
+            {
+                base.CalculateStatistics();
+            }
+            return;
         }
-
         public override void CalculateStudentStatistics(string name)
         {
             if (Students.Count < 5)
             {
-
-                Console.WriteLine("Ranked grading requires at least 5 students.");
+                Console.WriteLine("Ranked grading requires at least 5 students with grades in order to properly calculate a student's overall grade.");
                 return;
             }
-
-
-            base.CalculateStudentStatistics(name);
-        }
-
-        
+            else
+            {
+                base.CalculateStudentStatistics(name);
             }
+            return;
         }
-
-   
-
-
-
+    }
+}
