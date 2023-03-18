@@ -216,6 +216,7 @@ namespace GradeBookTests
                         if (output.Contains("create 'name' 'type' 'weighted' - creates a new gradebook where 'name' is the name of the gradebook, 'type' is what type of grading it should use, and 'weighted' is whether or not grades should be weighted (true or false)."))
                             return;
 
+
                         // Test if help command message is correct
                         Assert.True(output.Contains("create 'name' 'type' - creates a new gradebook where 'name' is the name of the gradebook and 'type' is what type of grading it should use."), "`GradeBook.UserInterfaces.StartingUserInterface.HelpCommand` didn't write \"Create 'Name' 'Type' - Creates a new gradebook where 'Name' is the name of the gradebook and 'Type' is what type of grading it should use.\"");
                     }

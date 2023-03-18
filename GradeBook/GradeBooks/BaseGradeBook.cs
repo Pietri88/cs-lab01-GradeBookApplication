@@ -6,15 +6,32 @@ using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using GradeBook.UserInterfaces;
 
 namespace GradeBook.GradeBooks
 {
-    public class BaseGradeBook
+    public abstract class BaseGradeBook
     {
         public string Name { get; set; }
         public List<Student> Students { get; set; }
 
         public GradeBookType Type { get; set; }
+
+        
+        public bool IsWeighted { get; set; }
+        public Dictionary<string, bool> WeightedLetterGrades { get; set; }
+
+        public BaseGradeBook(string name, bool isWeighted) 
+        {
+            Name = name;
+            IsWeighted = isWeighted;
+            WeightedLetterGrades = new Dictionary<string, bool>();
+        }
+
+        
+
+
+
 
         public BaseGradeBook(string name)
         {
@@ -42,11 +59,7 @@ namespace GradeBook.GradeBooks
             Students.Remove(student);
         }
 
-        //public void AddType(Student Type)
-        //{
-           
-        //    Students.Add(Type);
-        //}
+        
 
         public void AddGrade(string name, double score)
         {
@@ -82,6 +95,7 @@ namespace GradeBook.GradeBooks
             }
         }
 
+
         public static BaseGradeBook Load(string name)
         {
             if (!File.Exists(name + ".gdbk"))
@@ -99,6 +113,7 @@ namespace GradeBook.GradeBooks
                 }
             }
         }
+        
 
         public void Save()
         {
@@ -274,5 +289,7 @@ namespace GradeBook.GradeBooks
             
             return JsonConvert.DeserializeObject(json, gradebook);
         }
+
+        
     }
 }
