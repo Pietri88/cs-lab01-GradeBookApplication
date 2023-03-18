@@ -14,6 +14,8 @@ namespace GradeBook.GradeBooks
         public string Name { get; set; }
         public List<Student> Students { get; set; }
 
+        public GradeBookType Type { get; set; }
+
         public BaseGradeBook(string name)
         {
             Name = name;
@@ -39,6 +41,12 @@ namespace GradeBook.GradeBooks
             }
             Students.Remove(student);
         }
+
+        //public void AddType(Student Type)
+        //{
+           
+        //    Students.Add(Type);
+        //}
 
         public void AddGrade(string name, double score)
         {
